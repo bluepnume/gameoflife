@@ -1,0 +1,109 @@
+
+
+<table id="grid">
+	
+	
+</table>
+
+<style>
+	td {
+		width: 2px;
+		height: 4px;
+	}
+	
+	td.alive {
+		background-color: black;
+	}	
+</style>
+
+
+<script>
+	
+	window.GOL = {
+		
+		rows: 80,
+		cols: 100,
+		
+		time: 200,
+		
+		init: function() {
+			var gol = this;
+			
+			this.grid = this.get_grid(true)
+			
+			setInterval(function() {
+				gol.draw()
+				gol.update()
+			}, this.time)
+		},
+		
+		get_grid: function(random) {
+			
+			grid = []
+			for (var x=0; x<this.rows; x++) {
+				var row = []
+				for (var y=0; y<this.cols; y++) {
+					if (random)
+						row.push(Math.random() < 0.5 ? 1 : 0)
+					else
+						row.push(0)
+				}
+				grid.push(row)
+			}
+			
+			return grid
+		},
+		
+		update: function() {
+			
+			var grid = this.get_grid()
+			
+			for (var x=0; x<this.rows; x++) {
+				for (var y=0; y<this.cols; y++) {
+					
+					var surr = 0;
+					
+					for (var xo=-1; xo<=1; xo++) {
+						for (var yo=-1; yo<=1; yo++) {
+							var nx = x + xo;
+							var ny = y + yo;
+							
+							if (nx >= 0 && ny >= 0 && nx < this.rows && ny < this.cols)
+								surr += this.grid[nx][ny]
+						}
+					}
+					
+					if (this.grid[x][y])
+						grid[x][y] = surr > 1 && surr < 4 ? 1 : 0
+						
+					else
+						grid[x][y] = surr == 3 ? 1 : 0
+				}
+			}
+			
+			this.grid = grid;
+		},
+		
+		draw: function() {
+			
+			var table = document.getElementById('grid');
+			table.innerHTML = '';
+			
+			for (var x=0; x<this.rows; x++) {
+				var row = document.createElement('tr')
+				for (var y=0; y<this.cols; y++) {
+					var cell = document.createElement('td')
+					if (this.grid[x][y])
+						cell.className += 'alive'
+					row.appendChild(cell)
+				}
+				table.appendChild(row)
+			}
+		}
+	}
+	
+	GOL.init()
+	
+
+	
+</script>
